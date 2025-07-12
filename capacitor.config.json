@@ -1,0 +1,10 @@
+{
+  "appId": "app.lovable.94a72d0894b34166994a02c6826211a8",
+  "appName": "aura-bid-nexus",
+  "webDir": "dist",
+  "server": {
+    "url": "https://94a72d08-94b3-4166-994a-02c6826211a8.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  },
+  "bundledWebRuntime": false
+}
