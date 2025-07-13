@@ -1,73 +1,94 @@
-# Welcome to your Lovable project
+# 🌀 Aura Auction
 
-## Project info
+<p align="center">
+  <img src="https://img.shields.io/badge/AI-Powered-blueviolet?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Hackfest%203.0%20Project-Top%20Tier-00c853?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Live-Deployed-success?style=for-the-badge" />
+</p>
 
-**URL**: https://lovable.dev/projects/94a72d08-94b3-4166-994a-02c6826211a8
+> **The AI-Native Auction Marketplace for Trust, Transparency & Smart Commerce**  
+> Reimagining eBay from scratch with AI agents, dynamic pricing, and authenticity reports.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🌟 Project Summary
 
-**Use Lovable**
+**Aura Auction** is an AI-powered online auction marketplace built for high-value, rare, and collectible items. From listing generation to buyer-agent negotiation and scam prevention — everything is automated with cutting-edge AI agents and trust systems.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/94a72d08-94b3-4166-994a-02c6826211a8) and start prompting.
+Inspired by a simple question:  
+**_“What if eBay had a brain?”_**
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🔥 Key Features
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+✅ **AI-Powered Listings**  
+Upload photos and let Aura suggest title, description, price, condition & shipping info.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+✅ **Aura Report**  
+Dynamic AI-generated authenticity & trust certificate — the heart of the marketplace.
 
-Follow these steps:
+✅ **Buyer Chat Assistant**  
+Find items using natural language (\"Find me a 90s Casio watch under $200\").
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+✅ **AI Negotiation Agents**  
+Buyers and sellers deploy agents to strike the best deals within set rules.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+✅ **Dynamic Pricing Engine**  
+Real-time market-aware price adjustments based on interest and trends.
 
-# Step 3: Install the necessary dependencies.
-npm i
+✅ **Live Auction Room**  
+Bidding wars with real-time animations, AI agents & gamified UX.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+✅ **Mobile-Ready + Multilingual**  
+Supports Urdu, Arabic, Spanish, and English — with RTL compatibility.
+
+---
+
+## 🧠 Built With
+
+| Layer            | Tech Stack                         |
+|------------------|------------------------------------|
+| 🖼️ Frontend      | React, Tailwind CSS                |
+| 🔐 Auth          | Firebase Auth / Supabase           |
+| 🧠 AI Models     | OpenAI GPT-4o, Vision APIs, CLIP   |
+| 🧩 Vector Search | Pinecone / Vectara                 |
+| 💾 Database      | Firebase Realtime DB / Supabase    |
+| ☁️ Storage       | Cloudinary                         |
+| 🚀 Hosting       | Vercel / Firebase Hosting          |
+
+---
+
+## 🧪 How It Works
+
+1. **Sellers** upload product images → AI creates the listing  
+2. **Buyers** describe what they want → AI curates recommendations  
+3. Each listing includes an **Aura Report** for trust & authenticity  
+4. **AI agents** handle negotiation, pricing, and escrow logic  
+5. Users can enter **live auctions** and let agents auto-bid  
+
+---
+
+## 🛠️ Setup (For Developers)
+
+> 📝 If cloning for demo purposes, use mock data and dummy AI keys.
+
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/aura-auction.git
+
+# Install dependencies
+npm install
+
+# Add environment variables
+cp .env.example .env
+
+# Run locally
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/94a72d08-94b3-4166-994a-02c6826211a8) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## ✨ Live Demo
+🚀 Check out the live deployed version here:
+https://aura-auction.vercel.app
