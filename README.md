@@ -11,6 +11,13 @@
 
 ---
 
+## 👥 Team Members
+| [![Haris Mughal](https://github.com/haris-mughal.png?size=100)](https://github.com/haris-mughal)<br>Haris Mughal | [![Maham Mansoor](https://github.com/Maham-Codes.png?size=100)](https://github.com/Maham-Codes)<br>Maham Mansoor | [![Abdul Rauf Nizamani](https://github.com/raufnizam.png?size=100)](https://github.com/raufnizam)<br>Abdul Rauf Nizamani | [![Taaha Hussain Khan](https://github.com/taaha-khan.png?size=100)](https://github.com/taaha-khan)<br>Taaha Hussain Khan | [![Hassan Hafeez](https://github.com/iamhassanhafeez.png?size=100)](https://github.com/iamhassanhafeez)<br>Hassan Hafeez |
+|---|---|---|---|---|
+
+
+---
+
 ## 🌟 Project Summary
 
 **Aura Auction** is an AI-powered online auction marketplace built for high-value, rare, and collectible items. From listing generation to buyer-agent negotiation and scam prevention — everything is automated with cutting-edge AI agents and trust systems.
@@ -49,13 +56,11 @@ Supports Urdu, Arabic, Spanish, and English — with RTL compatibility.
 
 | Layer            | Tech Stack                         |
 |------------------|------------------------------------|
-| 🖼️ Frontend      | React, Tailwind CSS                |
-| 🔐 Auth          | Firebase Auth / Supabase           |
+| 🖼️ Frontend      | React (vite), Tailwind CSS         |
+| 🔐 Auth          | Supabase                           |
 | 🧠 AI Models     | OpenAI GPT-4o, Vision APIs, CLIP   |
-| 🧩 Vector Search | Pinecone / Vectara                 |
-| 💾 Database      | Firebase Realtime DB / Supabase    |
-| ☁️ Storage       | Cloudinary                         |
-| 🚀 Hosting       | Vercel / Firebase Hosting          |
+| 💾 Database      | Supabase                           |
+| 🚀 Hosting       | Vercel                             |
 
 ---
 
