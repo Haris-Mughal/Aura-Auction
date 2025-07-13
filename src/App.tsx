@@ -13,6 +13,7 @@ import AINegotiation from "./pages/AINegotiation";
 import TransactionSummary from "./pages/TransactionSummary";
 import AuctionRoom from "./pages/AuctionRoom";
 import Auth from "./pages/Auth";
+import Register from "./pages/Register";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
 
@@ -29,7 +30,9 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/auction" element={<AuctionRoom />} />
 
               {/* Protected Routes */}
               <Route element={<ProtectedRoute allowedRoles={['seller']} />}>
@@ -39,7 +42,6 @@ const App = () => (
                 <Route path="/buy" element={<Buyer />} />
                 <Route path="/negotiate" element={<AINegotiation />} />
                 <Route path="/transaction/:id" element={<TransactionSummary />} />
-                <Route path="/auction" element={<AuctionRoom />} />
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

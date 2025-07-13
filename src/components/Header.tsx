@@ -53,14 +53,14 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <div className={`hidden md:flex items-center space-x-8 ${isRTL ? 'space-x-reverse' : ''}`}>
+            {user && (
+              <button onClick={() => navigate('/auction')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="Live Auctions" /></button>
+            )}
             {user?.role === 'buyer' && (
-              <>
-                <button onClick={() => navigate('/buy')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="Dashboard" /></button>
-                <button onClick={() => navigate('/negotiate')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="AI Negotiate" /></button>
-              </>
+              <button onClick={() => navigate('/buy')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="My Dashboard" /></button>
             )}
             {user?.role === 'seller' && (
-              <button onClick={() => navigate('/sell')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="Dashboard" /></button>
+              <button onClick={() => navigate('/sell')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="My Dashboard" /></button>
             )}
             {!user && (
               <>
@@ -146,14 +146,14 @@ const Header = () => {
                 />
               </div>
               
+              {user && (
+                <button onClick={() => handleMobileLinkClick('/auction')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="Live Auctions" /></button>
+              )}
               {user?.role === 'buyer' && (
-                <>
-                  <button onClick={() => handleMobileLinkClick('/buy')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="Dashboard" /></button>
-                  <button onClick={() => handleMobileLinkClick('/negotiate')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="AI Negotiate" /></button>
-                </>
+                <button onClick={() => handleMobileLinkClick('/buy')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="My Dashboard" /></button>
               )}
               {user?.role === 'seller' && (
-                <button onClick={() => handleMobileLinkClick('/sell')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="Dashboard" /></button>
+                <button onClick={() => handleMobileLinkClick('/sell')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="My Dashboard" /></button>
               )}
               {!user && (
                 <>

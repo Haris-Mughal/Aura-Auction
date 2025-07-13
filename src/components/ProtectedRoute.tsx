@@ -9,7 +9,11 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>; // Or a spinner component
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
   }
 
   if (!user) {

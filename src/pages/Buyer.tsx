@@ -105,7 +105,9 @@ export default function Buyer() {
         method: "POST",
         headers: {
           "Authorization": "Bearer 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",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://aura-auction.com",
+          "X-Title": "Aura Auction"
         },
         body: JSON.stringify({
           "model": "deepseek/deepseek-r1-0528:free",

@@ -8,16 +8,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sparkles } from 'lucide-react';
 
-export default function Auth() {
+export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = (role: 'buyer' | 'seller') => {
+  const handleRegister = (role: 'buyer' | 'seller') => {
     if (email && password) {
+      // In a real app, you would have a separate signUp function
+      // For this demo, we'll just log them in directly
       login({ email, role });
-      navigate(role === 'buyer' ? '/buy' : '/seller');
+      navigate(role === 'buyer' ? '/buy' : '/sell');
     } else {
       alert('Please enter email and password');
     }
@@ -35,14 +37,14 @@ export default function Auth() {
       </div>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Sign in to access your account</CardDescription>
+          <CardTitle>Create an Account</CardTitle>
+          <CardDescription>Join Aura Auction to start buying or selling.</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="buyer">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="buyer">Buyer Login</TabsTrigger>
-              <TabsTrigger value="seller">Seller Login</TabsTrigger>
+              <TabsTrigger value="buyer">I'm a Buyer</TabsTrigger>
+              <TabsTrigger value="seller">I'm a Seller</TabsTrigger>
             </TabsList>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
@@ -55,20 +57,20 @@ export default function Auth() {
               </div>
             </div>
             <TabsContent value="buyer" className="pt-4">
-              <Button onClick={() => handleLogin('buyer')} className="w-full">
-                Sign in as Buyer
+              <Button onClick={() => handleRegister('buyer')} className="w-full">
+                Register as a Buyer
               </Button>
             </TabsContent>
             <TabsContent value="seller" className="pt-4">
-              <Button onClick={() => handleLogin('seller')} className="w-full">
-                Sign in as Seller
+              <Button onClick={() => handleRegister('seller')} className="w-full">
+                Register as a Seller
               </Button>
             </TabsContent>
           </Tabs>
           <div className="mt-4 text-center text-sm">
-            Don't have an account?{' '}
-            <Link to="/register" className="underline">
-              Sign up
+            Already have an account?{' '}
+            <Link to="/auth" className="underline">
+              Sign in
             </Link>
           </div>
         </CardContent>
