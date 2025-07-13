@@ -28,7 +28,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <nav className={`flex items-center justify-between h-14 md:h-16 ${isRTL ? 'flex-row-reverse' : ''}`}>
           {/* Logo */}
-          <div className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+          <div className={`flex items-center cursor-pointer space-x-2 ${isRTL ? 'space-x-reverse' : ''}`} onClick={() => navigate('/')}>
             <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-ai rounded-lg flex items-center justify-center">
               <Sparkles className="w-3 h-3 md:w-5 md:h-5 text-white" />
             </div>
@@ -76,7 +76,7 @@ const Header = () => {
             <TranslatedText 
               text="Search with AI..." 
               as="div" 
-              className="absolute inset-0 flex items-center px-3 py-2 pointer-events-none text-sm text-muted-foreground"
+              className="absolute flex items-center px-5 py-2 pointer-events-none text-sm text-muted-foreground"
             />
             <Badge variant="secondary" className="text-xs">
               AI
@@ -134,7 +134,7 @@ const Header = () => {
                 <TranslatedText 
                   text="Search with AI..." 
                   as="div" 
-                  className="absolute inset-0 flex items-center px-3 py-2 pointer-events-none text-sm text-muted-foreground"
+                  className="absolute flex items-center px-5 py-2 pointer-events-none text-sm text-muted-foreground"
                 />
               </div>
               
