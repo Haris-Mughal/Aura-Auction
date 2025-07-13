@@ -11,6 +11,7 @@ import FloatingCTA from "@/components/FloatingCTA";
 import { useNotifications } from "@/hooks/useNotifications";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import heroAuction from "@/assets/hero-auction.jpg";
 
 const AuctionRoom = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const AuctionRoom = () => {
   const auctionItem = {
     id: "auction-001",
     name: "1969 Omega Speedmaster Professional",
-    image: "/api/placeholder/400/300",
+    image: heroAuction,
     startingBid: 2500,
     currentBid: currentBid,
     trustScore: 94,
@@ -104,7 +105,7 @@ const AuctionRoom = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeRemaining, currentBid, autoBidEnabled, maxBidAmount, userMode]);
+  }, [timeRemaining, currentBid, autoBidEnabled, maxBidAmount, userMode, auctionItem.name, scheduleBidAlert]);
 
   const placeBid = () => {
     if (userMode === "bidder") {

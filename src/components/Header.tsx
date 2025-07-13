@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,66 +19,66 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchPlaceholder, setSearchPlaceholder] = useState('Search with AI...');
   const navigate = useNavigate();
-  const { isRTL } = useLanguage();
-  const { user, signOut } = useAuth();
+  const { isRTL, translate, currentLanguage } = useLanguage();
+  const { user, logout } = useAuth();
+
+  useEffect(() => {
+    const getPlaceholder = async () => {
+      const translated = await translate('Search with AI...');
+      setSearchPlaceholder(translated);
+    };
+    getPlaceholder();
+  }, [currentLanguage, translate]);
+
+  const handleMobileLinkClick = (path: string) => {
+    navigate(path);
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <nav className={`flex items-center justify-between h-14 md:h-16 ${isRTL ? 'flex-row-reverse' : ''}`}>
           {/* Logo */}
-          <div className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+          <button onClick={() => navigate('/')} className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
             <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-ai rounded-lg flex items-center justify-center">
               <Sparkles className="w-3 h-3 md:w-5 md:h-5 text-white" />
             </div>
             <span className="text-lg md:text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               <TranslatedText text="Aura Auction" />
             </span>
-          </div>
+          </button>
 
           {/* Desktop Navigation */}
           <div className={`hidden md:flex items-center space-x-8 ${isRTL ? 'space-x-reverse' : ''}`}>
-            <button 
-              onClick={() => navigate('/auction')}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              <TranslatedText text="Live Auctions" />
-            </button>
-            <a href="#sell" className="text-foreground hover:text-primary transition-colors">
-              <TranslatedText text="Sell" />
-            </a>
-            <button 
-              onClick={() => navigate('/buy')}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              <TranslatedText text="Buy" />
-            </button>
-            <button 
-              onClick={() => navigate('/negotiate')}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              <TranslatedText text="AI Negotiate" />
-            </button>
-            <a href="#about" className="text-foreground hover:text-primary transition-colors">
-              <TranslatedText text="About" />
-            </a>
+            {user?.role === 'buyer' && (
+              <>
+                <button onClick={() => navigate('/buy')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="Dashboard" /></button>
+                <button onClick={() => navigate('/negotiate')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="AI Negotiate" /></button>
+              </>
+            )}
+            {user?.role === 'seller' && (
+              <button onClick={() => navigate('/sell')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="Dashboard" /></button>
+            )}
+            {!user && (
+              <>
+                <button onClick={() => navigate('/auction')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="Live Auctions" /></button>
+                <button onClick={() => navigate('/#about')} className="text-foreground hover:text-primary transition-colors"><TranslatedText text="About" /></button>
+              </>
+            )}
           </div>
 
           {/* Search Bar - Hidden on mobile */}
-          <div className={`hidden lg:flex items-center bg-muted rounded-lg px-3 py-2 w-64 ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <Search className={`w-4 h-4 text-muted-foreground ${isRTL ? 'ml-2' : 'mr-2'}`} />
+          <div className={`hidden lg:flex relative items-center bg-muted rounded-lg w-64 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Search className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
             <input
               type="text"
-              placeholder=""
-              className="bg-transparent outline-none text-sm flex-1"
+              placeholder={searchPlaceholder}
+              className={`bg-transparent outline-none text-sm flex-1 h-full py-2 ${isRTL ? 'pr-10 pl-8' : 'pl-10 pr-8'}`}
             />
-            <TranslatedText 
-              text="Search with AI..." 
-              as="div" 
-              className="absolute inset-0 flex items-center px-3 py-2 pointer-events-none text-sm text-muted-foreground"
-            />
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className={`absolute top-1/2 -translate-y-1/2 text-xs ${isRTL ? 'left-2' : 'right-2'}`}>
               AI
             </Badge>
           </div>
@@ -87,7 +87,7 @@ const Header = () => {
           <div className={`flex items-center space-x-2 md:space-x-4 ${isRTL ? 'space-x-reverse' : ''}`}>
             <LanguageToggle />
             
-            <Button variant="ghost" size="icon" className="relative hidden md:flex">
+            <Button variant="ghost" size="icon" className="relative hidden md:flex" onClick={() => user ? navigate('/cart') : navigate('/auth')}>
               <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
               <Badge className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 p-0 flex items-center justify-center text-xs">
                 3
@@ -95,19 +95,31 @@ const Header = () => {
             </Button>
             
             {user ? (
-              <Button variant="ghost" size="icon" className="hidden md:flex" onClick={signOut}>
-                <LogOut className="w-4 h-4 md:w-5 md:h-5" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <span className="hidden md:inline text-sm text-muted-foreground">
+                  {user.email} ({user.role})
+                </span>
+                <Button variant="ghost" size="icon" className="hidden md:flex" onClick={logout}>
+                  <LogOut className="w-4 h-4 md:w-5 md:h-5" />
+                </Button>
+              </div>
             ) : (
               <Button variant="ghost" size="icon" className="hidden md:flex" onClick={() => navigate('/auth')}>
                 <User className="w-4 h-4 md:w-5 md:h-5" />
               </Button>
             )}
 
-            <Button size="sm" onClick={() => navigate('/sell')} className={`gap-1 md:gap-2 text-xs md:text-sm ${isRTL ? 'flex-row-reverse' : ''} hidden md:flex`}>
-              <Gavel className="w-3 h-3 md:w-4 md:h-4" />
-              <TranslatedText text="Start Selling" />
-            </Button>
+            {user && user.role === 'seller' ? (
+              <Button size="sm" onClick={() => navigate('/sell')} className={`gap-1 md:gap-2 text-xs md:text-sm ${isRTL ? 'flex-row-reverse' : ''} hidden md:flex`}>
+                <Gavel className="w-3 h-3 md:w-4 md:h-4" />
+                <TranslatedText text="Seller Dashboard" />
+              </Button>
+            ) : !user ? (
+              <Button size="sm" onClick={() => navigate('/auth')} className={`gap-1 md:gap-2 text-xs md:text-sm ${isRTL ? 'flex-row-reverse' : ''} hidden md:flex`}>
+                <User className="w-3 h-3 md:w-4 md:h-4" />
+                <TranslatedText text="Get Started" />
+              </Button>
+            ) : null}
 
             {/* Mobile Menu Toggle */}
             <Button
@@ -125,43 +137,30 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-border py-4 animate-slide-up">
             <div className="flex flex-col space-y-4">
-              <div className={`flex items-center bg-muted rounded-lg px-3 py-2 relative ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Search className={`w-4 h-4 text-muted-foreground ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              <div className={`relative flex items-center bg-muted rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Search className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
                 <input
                   type="text"
-                  className="bg-transparent outline-none text-sm flex-1"
-                />
-                <TranslatedText 
-                  text="Search with AI..." 
-                  as="div" 
-                  className="absolute inset-0 flex items-center px-3 py-2 pointer-events-none text-sm text-muted-foreground"
+                  placeholder={searchPlaceholder}
+                  className={`bg-transparent outline-none text-sm w-full h-full py-2 ${isRTL ? 'pr-10' : 'pl-10'}`}
                 />
               </div>
               
-              <button 
-                onClick={() => navigate('/auction')}
-                className="text-foreground hover:text-primary transition-colors py-2 text-left"
-              >
-                <TranslatedText text="Live Auctions" />
-              </button>
-              <a href="#sell" className="text-foreground hover:text-primary transition-colors py-2">
-                <TranslatedText text="Sell" />
-              </a>
-              <button 
-                onClick={() => navigate('/buy')}
-                className="text-foreground hover:text-primary transition-colors py-2 text-left"
-              >
-                <TranslatedText text="Buy" />
-              </button>
-              <button 
-                onClick={() => navigate('/negotiate')}
-                className="text-foreground hover:text-primary transition-colors py-2 text-left"
-              >
-                <TranslatedText text="AI Negotiate" />
-              </button>
-              <a href="#about" className="text-foreground hover:text-primary transition-colors py-2">
-                <TranslatedText text="About" />
-              </a>
+              {user?.role === 'buyer' && (
+                <>
+                  <button onClick={() => handleMobileLinkClick('/buy')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="Dashboard" /></button>
+                  <button onClick={() => handleMobileLinkClick('/negotiate')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="AI Negotiate" /></button>
+                </>
+              )}
+              {user?.role === 'seller' && (
+                <button onClick={() => handleMobileLinkClick('/sell')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="Dashboard" /></button>
+              )}
+              {!user && (
+                <>
+                  <button onClick={() => handleMobileLinkClick('/auction')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="Live Auctions" /></button>
+                  <button onClick={() => handleMobileLinkClick('/#about')} className="text-foreground hover:text-primary transition-colors py-2 text-left"><TranslatedText text="About" /></button>
+                </>
+              )}
             </div>
           </div>
         )}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Send, Filter, Star, Shield, Eye, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,7 +60,13 @@ const sampleProducts: Product[] = [
   }
 ];
 
-const chatSuggestions = [
+interface ChatSuggestion {
+  type: string;
+  label: string;
+  icon: React.ElementType;
+}
+
+const chatSuggestions: ChatSuggestion[] = [
   { type: 'brand', label: 'Rolex', icon: Tag },
   { type: 'price', label: 'Under $300', icon: Filter },
   { type: 'condition', label: 'Excellent', icon: Star },
@@ -89,32 +96,69 @@ export default function Buyer() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
 
-    // Simulate AI processing
-    setTimeout(() => {
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer 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",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          "model": "deepseek/deepseek-r1-0528:free",
+          "messages": [
+            { "role": "system", "content": "You are Aura AI, a helpful assistant for buyers on an auction site. Your goal is to help users find items they are looking for. You should be friendly and conversational. When you find items, list them clearly using markdown. If you are asked to find a variety of products under a certain price or a specific product, respond by saying you have found some items and are showing the best options." },
+            { "role": "user", "content": currentInput }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('API response was not ok.');
+      }
+
+      const data = await response.json();
+      const aiContent = data.choices[0].message.content;
+
       const aiResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: `I found ${sampleProducts.length} vintage watches under $500 that match your criteria. Here are the best options:`,
+        content: aiContent,
         timestamp: new Date()
       };
+      
+      // Simulate finding products if the AI mentions them
+      if (aiContent.toLowerCase().includes("found") || aiContent.toLowerCase().includes("here are")) {
+        const resultsMessage: ChatMessage = {
+          id: (Date.now() + 2).toString(),
+          type: 'results',
+          content: '',
+          products: sampleProducts,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiResponse, resultsMessage]);
+      } else {
+        setMessages(prev => [...prev, aiResponse]);
+      }
 
-      const resultsMessage: ChatMessage = {
-        id: (Date.now() + 2).toString(),
-        type: 'results',
-        content: '',
-        products: sampleProducts,
+    } catch (error) {
+      console.error("Error fetching from AI:", error);
+      const errorResponse: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'ai',
+        content: "Sorry, I'm having trouble connecting to my brain right now. Please try again later.",
         timestamp: new Date()
       };
-
-      setMessages(prev => [...prev, aiResponse, resultsMessage]);
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
+  const handleSuggestionClick = (suggestion: ChatSuggestion) => {
     setInput(suggestion.label);
   };
 
@@ -192,8 +236,8 @@ export default function Buyer() {
                         {message.content}
                       </div>
                     ) : message.type === 'ai' ? (
-                      <div className="bg-muted rounded-lg px-4 py-2 max-w-md">
-                        {message.content}
+                      <div className="bg-muted rounded-lg px-4 py-2 max-w-md prose dark:prose-invert">
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
                     ) : (
                       <div className="w-full">

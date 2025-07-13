@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { TranslationPipeline, TranslationSingle } from '@huggingface/transformers';
 
 export type Language = 'en' | 'ur' | 'es' | 'ar';
 
@@ -36,7 +37,7 @@ const translationCache = new Map<string, string>();
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
-  const [translator, setTranslator] = useState<any>(null);
+  const [translator, setTranslator] = useState<TranslationPipeline | null>(null);
 
   const isRTL = currentLanguage === 'ar' || currentLanguage === 'ur';
 
@@ -57,10 +58,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
         setTranslator(translationPipeline);
       } catch (error) {
         console.warn('Translation model failed to load, using fallback:', error);
-        // Fallback to a simple translation function
-        setTranslator({ 
-          translate: async (text: string) => text // Return original text as fallback
-        });
+        setTranslator(null);
       }
     };
 
@@ -98,13 +96,14 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     }
 
     try {
-      if (translator && translator.translate) {
+      if (translator) {
+        // @ts-ignore - The library's types for translation options are not precise.
         const result = await translator(text, {
           src_lang: 'eng_Latn',
-          tgt_lang: getLanguageCode(target)
+          tgt_lang: getLanguageCode(target),
         });
         
-        const translatedText = result[0]?.translation_text || text;
+        const translatedText = (result as TranslationSingle[])[0]?.translation_text || text;
         translationCache.set(cacheKey, translatedText);
         return translatedText;
       }
