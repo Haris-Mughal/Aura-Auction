@@ -78,9 +78,7 @@ const Header = () => {
               as="div" 
               className="absolute flex items-center px-5 py-2 pointer-events-none text-sm text-muted-foreground"
             />
-            <Badge variant="secondary" className="text-xs">
-              AI
-            </Badge>
+            <Badge variant="secondary" className="text-xs">AI</Badge>
           </div>
 
           {/* Right Actions */}
