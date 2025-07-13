@@ -104,10 +104,10 @@ export default function Buyer() {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": "Bearer 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",
-          "Content-Type": "application/json",
+          "Authorization": "Bearer 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",
           "HTTP-Referer": "https://aura-auction.com",
-          "X-Title": "Aura Auction"
+          "X-Title": "Aura Auction",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           "model": "deepseek/deepseek-r1-0528:free",

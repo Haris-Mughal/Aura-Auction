@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SellerMarketDashboard from '@/components/SellerMarketDashboard';
+import MyListings from '@/components/MyListings';
 import { useToast } from '@/hooks/use-toast';
 
 interface AnalysisResult {
@@ -28,6 +29,7 @@ const Seller = () => {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [manualMode, setManualMode] = useState(false);
   const [editedFields, setEditedFields] = useState<Partial<AnalysisResult>>({});
   const { toast } = useToast();
 
@@ -48,26 +50,105 @@ const Seller = () => {
     setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  const simulateAIAnalysis = async () => {
+  const handleAIAnalysis = async () => {
+    if (uploadedImages.length === 0) {
+      toast({
+        title: "No images uploaded",
+        description: "Please upload at least one image to analyze.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsAnalyzing(true);
-    
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Mock AI analysis result
-    const mockResult: AnalysisResult = {
-      title: "Vintage Rolex Submariner Watch - Authentic 1980s",
-      description: "A stunning vintage Rolex Submariner from the 1980s featuring the classic black dial and bezel. This timepiece shows excellent condition with minimal wear on the bracelet and crystal. The automatic movement keeps accurate time, and all original components are intact including the crown and case back.",
-      condition: "Excellent",
-      priceRange: "$8,500 - $12,000",
-      shippingLabel: "High-Value Insured Shipping",
-      authenticityScore: 94,
-      confidence: 89,
-      redFlags: ["Minor bracelet wear", "Age-related patina on dial"]
-    };
-    
-    setAnalysisResult(mockResult);
-    setIsAnalyzing(false);
+    setAnalysisResult(null);
+
+    try {
+      const imagePromises = uploadedImages.map(file => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const base64Images = await Promise.all(imagePromises);
+
+      const systemPrompt = `You are an expert product analyst for an auction website. Based on the provided images, generate a detailed analysis of the product. Your response must be a valid JSON object only, without any markdown formatting, comments, or other text. The JSON object must have the following structure:
+{
+  "title": "A concise and appealing title for the product.",
+  "description": "A detailed and enticing description of the product, highlighting its key features, history, and appeal.",
+  "condition": "A single word describing the condition (e.g., Mint, Excellent, Good, Fair, Poor).",
+  "priceRange": "An estimated price range for the auction (e.g., '$500 - $800').",
+  "shippingLabel": "A suggested shipping category (e.g., 'Standard', 'Fragile', 'High-Value Insured Shipping').",
+  "authenticityScore": "A score from 0 to 100 representing the confidence in the item's authenticity.",
+  "confidence": "A score from 0 to 100 on how confident you are in this analysis.",
+  "redFlags": ["A list of potential issues or concerns, if any."]
+}`;
+
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer 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",
+          "HTTP-Referer": "https://aura-auction.com",
+          "X-Title": "Aura Auction",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          "model": "deepseek/deepseek-r1-0528:free",
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                { "type": "text", "text": systemPrompt },
+                ...base64Images.map(url => ({ "type": "image_url", "image_url": { "url": url } }))
+              ]
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        throw new Error(`API Error (${response.status}): ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      const aiContent = data.choices[0].message.content;
+      
+      const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("AI response did not contain valid JSON.");
+      }
+      const cleanedJson = jsonMatch[0];
+
+      const parsedResult: AnalysisResult = JSON.parse(cleanedJson);
+      
+      setAnalysisResult(parsedResult);
+
+    } catch (error) {
+      console.error("Error during AI analysis:", error);
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      toast({
+        title: "AI Analysis Failed",
+        description: "You can now enter the details manually.",
+        variant: "destructive",
+      });
+      setManualMode(true);
+      setAnalysisResult({
+        title: "",
+        description: "",
+        condition: "",
+        priceRange: "",
+        shippingLabel: "",
+        authenticityScore: 0,
+        confidence: 0,
+        redFlags: [],
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleFieldEdit = (field: keyof AnalysisResult, value: string | number) => {
@@ -91,10 +172,14 @@ const Seller = () => {
       
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="listing" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="listing" className="flex items-center gap-2">
               <Upload className="w-4 h-4" />
               Create Listing
+            </TabsTrigger>
+            <TabsTrigger value="my-listings" className="flex items-center gap-2">
+              <Eye className="w-4 h-4" />
+              My Listings
             </TabsTrigger>
             <TabsTrigger value="market" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
@@ -160,13 +245,28 @@ const Seller = () => {
                   </div>
                   
                   {uploadedImages.length > 0 && !analysisResult && (
-                    <Button
-                      onClick={simulateAIAnalysis}
-                      className="w-full"
-                      disabled={isAnalyzing || uploadedImages.length === 0}
-                    >
-                      {isAnalyzing ? "Analyzing with Aura AI..." : "Analyze with Aura AI"}
-                    </Button>
+                    <div className="flex gap-4">
+                      <Button
+                        onClick={handleAIAnalysis}
+                        className="w-full"
+                        disabled={isAnalyzing || uploadedImages.length === 0}
+                      >
+                        {isAnalyzing ? "Analyzing..." : "Analyze with AI"}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setManualMode(true);
+                          setAnalysisResult({
+                            title: "", description: "", condition: "", priceRange: "",
+                            shippingLabel: "", authenticityScore: 0, confidence: 0, redFlags: []
+                          });
+                        }}
+                        className="w-full"
+                        variant="outline"
+                      >
+                        Enter Manually
+                      </Button>
+                    </div>
                   )}
                 </div>
               </CardContent>
@@ -336,6 +436,9 @@ const Seller = () => {
          </div>
            </TabsContent>
 
+           <TabsContent value="my-listings">
+             <MyListings />
+           </TabsContent>
            <TabsContent value="market">
              <SellerMarketDashboard />
            </TabsContent>
