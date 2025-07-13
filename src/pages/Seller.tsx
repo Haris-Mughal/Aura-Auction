@@ -90,7 +90,7 @@ const Seller = () => {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": "Bearer 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",
+          "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
           "HTTP-Referer": "https://aura-auction.com",
           "X-Title": "Aura Auction",
           "Content-Type": "application/json"
